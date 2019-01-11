@@ -9,6 +9,9 @@
 
 package org.springcloud.ribbon.consumer.controller;
 
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.springcloud.ribbon.consumer.dto.User;
 import org.springcloud.ribbon.consumer.service.HelloService;
 import org.springcloud.ribbon.consumer.service.UserService;
@@ -94,6 +97,30 @@ public class RibbonConsumerController {
 		
 		return user.toString();
 	}
+	
+	
+	
+	// =================================== 以下是 服务容错保护中，请求合并，方法，通过继承类实现方式，见UserCollapseCommand类=========================================	
 
+	@RequestMapping(value="/ribbon-consumer/users/find/{id}", method=RequestMethod.GET)
+	public String find(@PathVariable("id") Long id) throws Exception {
+		User user = userService.find(id);
+		
+		ServiceInstance instance = client.getLocalServiceInstance();
+		log.info("/ribbon-consumer/users/find/{}, host:" + instance.getHost() + ", service_id:{}", id, instance.getServiceId());
+		
+		return user.toString();
+	}
+	
+	@RequestMapping(value="/ribbon-consumer/users/findall/{ids}", method=RequestMethod.GET)
+	public String find(@PathVariable("ids") List<Long> ids) throws Exception {
+		List<User> userList = userService.findAll(ids);
+		
+		ServiceInstance instance = client.getLocalServiceInstance();
+		log.info("/ribbon-consumer/users/findall/{}, host:" + instance.getHost() + ", service_id:{}", StringUtils.join(ids, ","), instance.getServiceId());
+		
+		return userList.toString();
+	}
+	
 }
 
