@@ -2,14 +2,14 @@ package org.springcloud.ribbon.consumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * 
- */
 /**
  * ClassName: EurekaRibbonConsumerApplication <br/>
  * Function: Ribbon是一个基于HTTP和TCP的客户端负载均衡器，它可以在通过客户端中配置的 ribbonServerList服务端列表取轮询访问已达到均衡负载的作用。 <br/>
@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
  * @since JDK 1.8
  * @author kaiyun
  */
+@EnableCircuitBreaker	// 开启断路器功能（也可使用 Spring Cloud应用中的 @SpringCloudApplication 注解来修饰应用主类）
 @EnableDiscoveryClient	// 让应用注册为 Eureka 客户端应用，以获得服务发现的能力。
 @SpringBootApplication
 public class RibbonConsumerApplication{

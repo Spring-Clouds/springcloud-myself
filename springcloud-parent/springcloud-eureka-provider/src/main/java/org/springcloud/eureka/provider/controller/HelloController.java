@@ -9,6 +9,8 @@
 
 package org.springcloud.eureka.provider.controller;
 
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -36,8 +38,15 @@ public class HelloController {
 	private DiscoveryClient client;
 	
 	@RequestMapping(value="/hello", method=RequestMethod.GET)
-	public String index() {
+	public String index() throws Exception {
 		ServiceInstance instance = client.getLocalServiceInstance();
+		
+		// 让处理线程等待几秒钟，模拟下服务阻塞
+		//（由于Hystrix默认超时间是为2000毫秒，所以这里采用了0-3000的随机数以让处理过程有一定概率发生超时来触发断路器）
+		int sleepTime = new Random().nextInt(3000);
+		log.info("sleepTime:{}", sleepTime);
+		Thread.sleep(sleepTime);
+		
 		log.info("/hello, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());
 		return "hello world";
 	}
