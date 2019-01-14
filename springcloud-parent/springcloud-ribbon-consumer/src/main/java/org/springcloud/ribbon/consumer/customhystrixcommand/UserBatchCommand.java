@@ -45,16 +45,21 @@ public class UserBatchCommand extends HystrixCommand<List<User>> {
 	 */
 	@Override
     protected List<User> getFallback() {
+		getExecutionException().getStackTrace();
+		
 		List<User> userList = new ArrayList<>();
-		User user = new User();
-		user.setId(null);
-		user.setUserName("调用出异常啦，启用熔断器");
-		userList.add(user);
+		for(Long userId : userIds) {
+			User user = new User();
+			user.setId(userId);
+			user.setUserName("【合并请求】调用出异常啦，启用熔断器");
+			userList.add(user);
+		}
         return userList;
     }
 
 	@Override
 	protected List<User> run() throws Exception {
+		System.out.println("发送请求。。。参数为：" + userIds.toString() + Thread.currentThread().getName());
 		return userService.findAll(userIds);
 	}
 }

@@ -49,7 +49,7 @@ public class UserCommand extends HystrixCommand<User> {
 
 	@Override
 	protected User run() throws Exception {
-		return restTemplate.getForObject("http://PROVIDER-SERVICE/users/{1}", User.class, id);
+		return restTemplate.getForObject("http://PROVIDER-SERVICE/users/findone/{1}", User.class, id);
 	}
 }
 

@@ -42,7 +42,7 @@ public class UserCollapseCommand extends HystrixCollapser<List<User>, User, Long
 		// 为请求合并器设置了时间延迟属性，合并器会在该时间窗内收集获取单个 User 的请求并在时间窗结束时进行合并组装成单个批量请求。
 		super(Setter.withCollapserKey(HystrixCollapserKey.Factory.asKey("userServiceCommand"))
 				.andCollapserPropertiesDefaults(HystrixCollapserProperties.Setter()
-						.withTimerDelayInMilliseconds(100))
+						.withTimerDelayInMilliseconds(200))
 				);
 		this.userService = userService;
 		this.userId = userId;

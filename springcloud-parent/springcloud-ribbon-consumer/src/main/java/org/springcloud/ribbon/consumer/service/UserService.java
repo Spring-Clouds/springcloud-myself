@@ -10,6 +10,7 @@
 package org.springcloud.ribbon.consumer.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -17,7 +18,13 @@ import org.apache.commons.lang.StringUtils;
 import org.springcloud.ribbon.consumer.customhystrixcommand.UserCommand;
 import org.springcloud.ribbon.consumer.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommand.Setter;
@@ -25,6 +32,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import com.netflix.hystrix.contrib.javanica.command.AsyncResult;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -51,20 +59,26 @@ public class UserService {
 	 * @since JDK 1.8
 	 * @author kaiyun
 	 */
-	public User getUserByIdFallback(Long id) {
+	public User getUserByIdFallback(Long id, Throwable e) {
 		User user = new User();
 		user.setId(id);
-		user.setUserName("调用出异常啦，启用熔断器");
+		user.setUserName("【findone】调用出异常啦，启用熔断器");
+		
+		e.getStackTrace();
+		
 		return user;
 	}
-	public List<User> getUserByIdFallback(List<Long> ids) {
+	public List<User> getUsersFallback(List<Long> userIds, Throwable e) {
 		List<User> userList = new ArrayList<>();
-		for(Long id : ids) {
+		for(Long id : userIds) {
 			User user = new User();
 			user.setId(id);
-			user.setUserName("调用出异常啦，启用熔断器");
+			user.setUserName("【findall】调用出异常啦，启用熔断器");
 			userList.add(user);
 		}
+		
+		e.getStackTrace();
+		
 		return userList;
 	}
 	
@@ -102,7 +116,7 @@ public class UserService {
 		
 		Setter setter = com.netflix.hystrix.HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(""));
 		UserCommand userCommand = new UserCommand(setter, restTemplate, 1L);
-		Future<User> futrueUser = userCommand.queue();
+		Future<User> futrueUser = userCommand.queue();	// 异步
 		
 		long end = System.currentTimeMillis();
 		log.info("Spend time:{}", (end-start));
@@ -126,7 +140,7 @@ public class UserService {
 	public User getUserByIdSyncAnnotations(Long id) {
 		long start = System.currentTimeMillis();
 		
-		User user = restTemplate.getForObject("http://PROVIDER-SERVICE/users/{1}", User.class, id);
+		User user = restTemplate.getForObject("http://PROVIDER-SERVICE/users/findone/{1}", User.class, id);
 		
 		long end = System.currentTimeMillis();
 		log.info("Spend time:{}", (end-start));
@@ -149,7 +163,7 @@ public class UserService {
 		Future<User> futrueUser = new AsyncResult<User>() {
 			@Override
 			public User invoke() {
-				return restTemplate.getForObject("http://PROVIDER-SERVICE/users/{1}", User.class, id);
+				return restTemplate.getForObject("http://PROVIDER-SERVICE/users/findone/{1}", User.class, id);
 			}
 		};
 		
@@ -163,8 +177,8 @@ public class UserService {
 // =================================== 以下是 服务容错保护中，请求合并，方法，通过继承类实现方式，见UserCollapseCommand类=========================================	
 	
 	// @HystrixCollapser 实现了在 /users/{id} 依赖服务之前设置了一个批量请求合并器
-	@HystrixCollapser(batchMethod="findAll", collapserProperties= {@HystrixProperty(name="timerDelayInMilliseconds", value="100")} )
-	public User find(Long id) {
+	@HystrixCollapser(batchMethod="findAll", collapserProperties={@HystrixProperty(name="timerDelayInMilliseconds", value="200")})
+	public User findOne(Long userId) {
 		return null; 
 	}
 	
@@ -176,11 +190,28 @@ public class UserService {
 	 * @since JDK 1.8
 	 * @author kaiyun
 	 */
-	@HystrixCommand(fallbackMethod = "getUserByIdFallback")
-	public List<User> findAll(List<Long> ids) {
+	@HystrixCommand(fallbackMethod = "getUsersFallback")
+	public List<User> findAll(List<Long> userIds) {
 		long start = System.currentTimeMillis();
 		
-		List<User> userList = restTemplate.getForObject("http://PROVIDER-SERVICE/users?ids={1}", List.class, StringUtils.join(ids, ","));
+		// 参考链接：RestTemplate.getForObject将PO中List的泛型变成LinkedHashMap问题的解决： https://blog.csdn.net/amosryan/article/details/54019479
+		
+//		List<User> userList = restTemplate.getForObject("http://PROVIDER-SERVICE/users/findall/{1}", new ArrayList<User>().getClass(), StringUtils.join(userIds, ","));
+		
+		List<User> userList = Collections.emptyList();
+		try {
+			ParameterizedTypeReference<List<User>> typeRef = new ParameterizedTypeReference<List<User>>() { };
+			MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+			multiValueMap.add("userIds", StringUtils.join(userIds, ","));
+			ResponseEntity<List<User>> responseEntity = restTemplate.exchange(
+					"http://provider-service/users/findall?userIds={1}" + StringUtils.join(userIds, ","),
+					HttpMethod.GET, new HttpEntity<>(multiValueMap), typeRef);
+			userList = responseEntity.getBody();
+		} catch (Exception e) {
+			log.error("-------------findall 失败！", e);;
+			throw e;
+		}
+		
 		
 		long end = System.currentTimeMillis();
 		log.info("Spend time:{}", (end-start));

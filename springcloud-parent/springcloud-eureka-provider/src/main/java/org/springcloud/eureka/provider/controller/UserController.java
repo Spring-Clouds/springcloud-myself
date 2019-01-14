@@ -42,26 +42,29 @@ public class UserController {
 	@Autowired
 	private DiscoveryClient client;
 	
-	@RequestMapping(value="/users/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/users/findone/{id}", method=RequestMethod.GET)
 	public User getUserById(@PathVariable("id") Long id) throws Exception {
 		ServiceInstance instance = client.getLocalServiceInstance();
 		User user = new User();
 		user.setId(id);
 		user.setUserName("kaiyun");
-		log.info("/users/{}, host:" + instance.getHost() + ", service_id:{}", id, instance.getServiceId());
+		log.info("/users/findone/{}, host:" + instance.getHost() + ", service_id:{}", id, instance.getServiceId());
 		log.info("----------{}", user.toString());
 		return user;
 	}
 	
-	@RequestMapping(value="/users", method=RequestMethod.GET)
-	public List<User> getAllUser(String ids) throws Exception {
+	@RequestMapping(value="/users/findall", method=RequestMethod.GET)
+	public List<User> getAllUser(String userIds) throws Exception {
 		ServiceInstance instance = client.getLocalServiceInstance();
 		List<User> userList = new ArrayList<>();
-		User user = new User();
-		user.setId(1L);
-		user.setUserName("kaiyun");
-		userList.add(user);
-		log.info("/users/{}, host:" + instance.getHost() + ", service_id:{}", ids, instance.getServiceId());
+		String[] userIdArray = userIds.split(",");
+		for(String str : userIdArray) {
+			User user = new User();
+			user.setId(Long.valueOf(str));
+			user.setUserName("kaiyun");
+			userList.add(user);
+		}
+		log.info("/users/findall/{}, host:" + instance.getHost() + ", service_id:{}", userIds, instance.getServiceId());
 		log.info("----------{}", userList.toString());
 		return userList;
 	}
