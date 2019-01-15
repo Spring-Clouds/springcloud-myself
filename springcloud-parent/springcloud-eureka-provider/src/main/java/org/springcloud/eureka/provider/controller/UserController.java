@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,13 +49,22 @@ public class UserController {
 		User user = new User();
 		user.setId(id);
 		user.setUserName("kaiyun");
-		log.info("/users/findone/{}, host:" + instance.getHost() + ", service_id:{}", id, instance.getServiceId());
-		log.info("----------{}", user.toString());
+		log.info("/users/findone/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		log.info("----------服务提供方 - getUserById 方法响应：{}", user.toString());
 		return user;
 	}
 	
+	/**
+	 * getAllUser:(这里用一句话描述这个方法的作用). <br/>
+	 *
+	 * @param userIds
+	 * @return
+	 * @throws Exception
+	 * @since JDK 1.8
+	 * @author kaiyun
+	 */
 	@RequestMapping(value="/users/findall", method=RequestMethod.GET)
-	public List<User> getAllUser(String userIds) throws Exception {
+	public List<User> getAllUser(@RequestHeader(value="userIds") String userIds) throws Exception {
 		ServiceInstance instance = client.getLocalServiceInstance();
 		List<User> userList = new ArrayList<>();
 		String[] userIdArray = userIds.split(",");
@@ -64,8 +74,8 @@ public class UserController {
 			user.setUserName("kaiyun");
 			userList.add(user);
 		}
-		log.info("/users/findall/{}, host:" + instance.getHost() + ", service_id:{}", userIds, instance.getServiceId());
-		log.info("----------{}", userList.toString());
+		log.info("/users/findall/{}, host:{}, service_id:{}", userIds, instance.getHost(), instance.getServiceId());
+		log.info("----------服务提供方 - getAllUser 方法响应：{}", userList.toString());
 		return userList;
 	}
 }

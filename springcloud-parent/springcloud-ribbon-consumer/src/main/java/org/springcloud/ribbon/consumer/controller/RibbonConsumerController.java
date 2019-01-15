@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +69,7 @@ public class RibbonConsumerController {
 		User user = userService.getUserByIdSyncUnAnnotations(id);
 		
 		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("/ribbon-consumer/users/sync/{}, host:" + instance.getHost() + ", service_id:{}", id, instance.getServiceId());
+		log.info("/ribbon-consumer/users/sync/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
 		
 		return user.toString();
 	}
@@ -78,7 +79,7 @@ public class RibbonConsumerController {
 		User user = userService.getUserByIdAsyncUnAnnotations(id).get();
 		
 		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("/ribbon-consumer/users/async/{}, host:" + instance.getHost() + ", service_id:{}", id, instance.getServiceId());
+		log.info("/ribbon-consumer/users/async/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
 		
 		return user.toString();
 	}
@@ -88,7 +89,7 @@ public class RibbonConsumerController {
 		User user = userService.getUserByIdSyncAnnotations(id);
 		
 		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("/ribbon-consumer/users/sync/anno/{}, host:" + instance.getHost() + ", service_id:{}", id, instance.getServiceId());
+		log.info("/ribbon-consumer/users/sync/anno/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
 		
 		return user.toString();
 	}
@@ -98,17 +99,20 @@ public class RibbonConsumerController {
 		User user = userService.getUserByIdAsyncAnnotations(id).get();
 		
 		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("/ribbon-consumer/users/async/anno/{}, host:" + instance.getHost() + ", service_id:{}", id, instance.getServiceId());
+		log.info("/ribbon-consumer/users/async/anno/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
 		
 		return user.toString();
 	}
 	
-	
-	
-	// =================================== 以下是 服务容错保护中，请求合并，方法，通过继承类实现方式，见UserCollapseCommand类=========================================	
-
-	@RequestMapping(value="/ribbon-consumer/users/find", method=RequestMethod.GET)
-	public String find() throws Exception {
+	/**
+	 * findOne:【服务容错保护Hystrix - 请求合并】继承HystrixCollapser类实现（见UserCollapseCommand类）. <br/>
+	 *
+	 * @throws Exception
+	 * @since JDK 1.8
+	 * @author kaiyun
+	 */
+	@RequestMapping(value="/ribbon-consumer/users/findone/hystrix/collapse", method=RequestMethod.GET)
+	public void findOne() throws Exception {
 		HystrixRequestContext context = HystrixRequestContext.initializeContext();
 		UserCollapseCommand command = new UserCollapseCommand(userService,1L);
 		UserCollapseCommand command1 = new UserCollapseCommand(userService,2L);
@@ -132,28 +136,41 @@ public class RibbonConsumerController {
         System.out.println(r2.toString());
 
         context.close();
-
-        return null;
+        
+        ServiceInstance instance = client.getLocalServiceInstance();
+        log.info("/ribbon-consumer/users/find, host:{}, service_id:{}", instance.getHost(), instance.getServiceId());
 	}
 	
-	@RequestMapping(value="/ribbon-consumer/users/findone/{userId}", method=RequestMethod.GET)
-	public String find(@PathVariable("userId") Long userId) throws Exception {
-		User user = userService.findOne(userId);
-		
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("/ribbon-consumer/users/find/{}, host:" + instance.getHost() + ", service_id:{}", userId, instance.getServiceId());
-		
-		return user.toString();
-	}
-	
-	@RequestMapping(value="/ribbon-consumer/users/findall/{userIds}", method=RequestMethod.GET)
-	public String find(@PathVariable("userIds") List<Long> userIds) throws Exception {
-		List<User> userList = userService.findAll(userIds);
-		
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("/ribbon-consumer/users/findall/{}, host:" + instance.getHost() + ", service_id:{}", StringUtils.join(userIds, ","), instance.getServiceId());
-		
-		return userList.toString();
+	/**
+	 * findOneByAnnotation:【服务容错保护Hystrix - 请求合并】注解实现（@HystrixCollapser）. <br/>
+	 *
+	 * @throws Exception
+	 * @since JDK 1.8
+	 * @author kaiyun
+	 */
+	@RequestMapping(value="/ribbon-consumer/users/findone/hystrix/collapse/annotation", method=RequestMethod.GET)
+	public void findOneByAnnotation() throws Exception {
+		HystrixRequestContext context = HystrixRequestContext.initializeContext();
+	    Future<User> f1 = userService.findOne(1l);
+	    Future<User> f2 = userService.findOne(2l);
+	    Future<User> f3 = userService.findOne(3l);
+	    User b1 = f1.get();
+	    User b2 = f2.get();
+	    User b3 = f3.get();
+	    
+	    Thread.sleep(2000);
+	    
+	    Future<User> f4 = userService.findOne(4l);
+	    User b4 = f4.get();
+	    System.out.println("b1>>>"+b1);
+	    System.out.println("b2>>>"+b2);
+	    System.out.println("b3>>>"+b3);
+	    System.out.println("b4>>>"+b4);
+	    
+	    context.close();
+	    
+	    ServiceInstance instance = client.getLocalServiceInstance();
+	    log.info("/ribbon-consumer/users/find, host:{}, service_id:{}", instance.getHost(), instance.getServiceId());
 	}
 	
 }

@@ -20,14 +20,15 @@ import org.springcloud.ribbon.consumer.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import com.netflix.hystrix.HystrixCommandGroupKey;
+
 import com.netflix.hystrix.HystrixCommand.Setter;
+import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
@@ -53,36 +54,6 @@ public class UserService {
 	
 	
 	/**
-	 * getUserByIdFallback:服务降级的方法（是Hystrix命令执行失败时使用的后备方法，用来实现服务的降级处理逻辑）. <br/>
-	 *
-	 * @return
-	 * @since JDK 1.8
-	 * @author kaiyun
-	 */
-	public User getUserByIdFallback(Long id, Throwable e) {
-		User user = new User();
-		user.setId(id);
-		user.setUserName("【findone】调用出异常啦，启用熔断器");
-		
-		e.getStackTrace();
-		
-		return user;
-	}
-	public List<User> getUsersFallback(List<Long> userIds, Throwable e) {
-		List<User> userList = new ArrayList<>();
-		for(Long id : userIds) {
-			User user = new User();
-			user.setId(id);
-			user.setUserName("【findall】调用出异常啦，启用熔断器");
-			userList.add(user);
-		}
-		
-		e.getStackTrace();
-		
-		return userList;
-	}
-	
-	/**
 	 * syncUnAnnotationsgetUserById: 使用自定义请求命令，实现请求的同步执行. <br/>
 	 *
 	 * @param id
@@ -93,8 +64,7 @@ public class UserService {
 	public User getUserByIdSyncUnAnnotations(Long id) {
 		long start = System.currentTimeMillis();
 		
-		Setter setter = com.netflix.hystrix.HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(""));
-		UserCommand userCommand = new UserCommand(setter, restTemplate, 1L);
+		UserCommand userCommand = new UserCommand(restTemplate, 1L);
 		User user = userCommand.execute();
 		
 		long end = System.currentTimeMillis();
@@ -114,8 +84,7 @@ public class UserService {
 	public Future<User> getUserByIdAsyncUnAnnotations(Long id) {
 		long start = System.currentTimeMillis();
 		
-		Setter setter = com.netflix.hystrix.HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(""));
-		UserCommand userCommand = new UserCommand(setter, restTemplate, 1L);
+		UserCommand userCommand = new UserCommand(restTemplate, 1L);
 		Future<User> futrueUser = userCommand.queue();	// 异步
 		
 		long end = System.currentTimeMillis();
@@ -173,12 +142,31 @@ public class UserService {
 		return futrueUser;
 	}
 	
+	/**
+	 * getUserByIdFallback: Hystrix - 服务降级的方法（是Hystrix命令执行失败时使用的后备方法，用来实现服务的降级处理逻辑）. <br/>
+	 *
+	 * @param id Long
+	 * @param e	Throwable（Hystrix 异常传播）
+	 * @return
+	 * @since JDK 1.8
+	 * @author kaiyun
+	 */
+	public User getUserByIdFallback(Long id, Throwable e) {
+		User user = new User();
+		user.setId(id);
+		user.setUserName("【findone】调用出异常啦，启用熔断器");
+		
+		e.getStackTrace();
+		
+		return user;
+	}
 	
-// =================================== 以下是 服务容错保护中，请求合并，方法，通过继承类实现方式，见UserCollapseCommand类=========================================	
+	
+// =================================== 服务容错保护 - 请求合并 - 方法 - begin =========================================
 	
 	// @HystrixCollapser 实现了在 /users/{id} 依赖服务之前设置了一个批量请求合并器
 	@HystrixCollapser(batchMethod="findAll", collapserProperties={@HystrixProperty(name="timerDelayInMilliseconds", value="200")})
-	public User findOne(Long userId) {
+	public Future<User> findOne(Long userId) {
 		return null; 
 	}
 	
@@ -194,30 +182,54 @@ public class UserService {
 	public List<User> findAll(List<Long> userIds) {
 		long start = System.currentTimeMillis();
 		
-		// 参考链接：RestTemplate.getForObject将PO中List的泛型变成LinkedHashMap问题的解决： https://blog.csdn.net/amosryan/article/details/54019479
-		
+//		参考链接：RestTemplate.getForObject将PO中List的泛型变成LinkedHashMap问题的解决： https://blog.csdn.net/amosryan/article/details/54019479
 //		List<User> userList = restTemplate.getForObject("http://PROVIDER-SERVICE/users/findall/{1}", new ArrayList<User>().getClass(), StringUtils.join(userIds, ","));
 		
 		List<User> userList = Collections.emptyList();
 		try {
 			ParameterizedTypeReference<List<User>> typeRef = new ParameterizedTypeReference<List<User>>() { };
-			MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-			multiValueMap.add("userIds", StringUtils.join(userIds, ","));
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("userIds", StringUtils.join(userIds, ","));
+			HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<MultiValueMap<String, Object>>(null,headers);
 			ResponseEntity<List<User>> responseEntity = restTemplate.exchange(
-					"http://provider-service/users/findall?userIds={1}" + StringUtils.join(userIds, ","),
-					HttpMethod.GET, new HttpEntity<>(multiValueMap), typeRef);
+					"http://provider-service/users/findall",
+					HttpMethod.GET, httpEntity, typeRef);
 			userList = responseEntity.getBody();
 		} catch (Exception e) {
 			log.error("-------------findall 失败！", e);;
 			throw e;
 		}
 		
-		
 		long end = System.currentTimeMillis();
 		log.info("Spend time:{}", (end-start));
 		
 		return userList; 
 	}
+	
+	/**
+	 * getUsersFallback: Hystrix - 服务降级的方法（是Hystrix命令执行失败时使用的后备方法，用来实现服务的降级处理逻辑）. <br/>
+	 *
+	 * @param userIds	List<Long>
+	 * @param e	Throwable（Hystrix 异常传播）
+	 * @return
+	 * @since JDK 1.8
+	 * @author kaiyun
+	 */
+	public List<User> getUsersFallback(List<Long> userIds, Throwable e) {
+		List<User> userList = new ArrayList<>();
+		for(Long id : userIds) {
+			User user = new User();
+			user.setId(id);
+			user.setUserName("【findall】调用出异常啦，启用熔断器");
+			userList.add(user);
+		}
+		
+		e.getStackTrace();
+		
+		return userList;
+	}
+	
+// =================================== 服务容错保护 - 请求合并 - 方法 - end =========================================
 	
 }
 
