@@ -12,6 +12,8 @@ package org.springcloud.ribbon.consumer.controller;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.springcloud.ribbon.consumer.customhystrixcommand.UserBatchCommand;
 import org.springcloud.ribbon.consumer.dto.User;
@@ -112,7 +114,9 @@ public class RibbonConsumerController {
 	 * @author kaiyun
 	 */
 	@RequestMapping(value="/ribbon-consumer/users/findone/hystrix/collapse", method=RequestMethod.GET)
-	public void findOne() throws Exception {
+	public void findOne(HttpServletResponse response) throws Exception {
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		
 		HystrixRequestContext context = HystrixRequestContext.initializeContext();
 		UserCollapseCommand command = new UserCollapseCommand(userService,1L);
 		UserCollapseCommand command1 = new UserCollapseCommand(userService,2L);

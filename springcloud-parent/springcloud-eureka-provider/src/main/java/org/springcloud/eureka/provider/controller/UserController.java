@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.springcloud.eureka.provider.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,9 @@ public class UserController {
 	private DiscoveryClient client;
 	
 	@RequestMapping(value="/users/findone/{id}", method=RequestMethod.GET)
-	public User getUserById(@PathVariable("id") Long id) throws Exception {
+	public User getUserById(@PathVariable("id") Long id, HttpServletResponse response) throws Exception {
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		
 		ServiceInstance instance = client.getLocalServiceInstance();
 		User user = new User();
 		user.setId(id);
@@ -64,7 +68,9 @@ public class UserController {
 	 * @author kaiyun
 	 */
 	@RequestMapping(value="/users/findall", method=RequestMethod.GET)
-	public List<User> getAllUser(@RequestHeader(value="userIds") String userIds) throws Exception {
+	public List<User> getAllUser(@RequestHeader(value="userIds") String userIds, HttpServletResponse response) throws Exception {
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		
 		ServiceInstance instance = client.getLocalServiceInstance();
 		List<User> userList = new ArrayList<>();
 		String[] userIdArray = userIds.split(",");
