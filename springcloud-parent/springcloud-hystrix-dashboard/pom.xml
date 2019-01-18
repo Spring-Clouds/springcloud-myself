@@ -8,8 +8,8 @@
     <version>1.0.0.0-SNAPSHOT</version>
   </parent>
   
-  <artifactId>springcloud-ribbon-consumer</artifactId>
-  <name>springcloud-ribbon-consumer</name>
+  <artifactId>springcloud-hystrix-dashboard</artifactId>
+  <name>springcloud-hystrix-dashboard</name>
   <url>http://maven.apache.org</url>
   
   <properties>
@@ -17,35 +17,21 @@
   </properties>
   
   <dependencies>
-  	<dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    
-  	<dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-eureka-server</artifactId>
-    </dependency>
-    
+    <!-- hystrix仪表盘：
+    	Hystrix Dashboard是Hystrix的仪表盘组件，主要用来实时监控Hystrix的各项指标信息，通过界面反馈的信息可以快速发现系统中存在的问题。
+    	Dashboard服务是个独立的结点，不需要配置eureka信息，只需要依赖以下jar包
+    -->
     <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-ribbon</artifactId>
-    </dependency>
-    
-    <dependency>
-		<groupId>org.springframework.retry</groupId>
-		<artifactId>spring-retry</artifactId>
-	</dependency>
-	
-	<dependency>
 	  <groupId>org.springframework.cloud</groupId>
 	  <artifactId>spring-cloud-starter-hystrix</artifactId>
 	</dependency>
-	
+	<dependency>
+	    <groupId>org.springframework.cloud</groupId>
+	    <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
+	</dependency>
 	<dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
-
   </dependencies>
 </project>

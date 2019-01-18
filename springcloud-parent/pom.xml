@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.4.RELEASE</version>
+    <version>1.5.9.RELEASE</version>
   </parent>
   
   <groupId>com.kaiyun.springcloud</groupId>
@@ -25,6 +25,8 @@
     <module>springcloud-eureka-server</module>
     <module>springcloud-eureka-provider</module>
     <module>springcloud-ribbon-consumer</module>
+    <module>springcloud-hystrix-dashboard</module>
+    <module>springcloud-turbine</module>
   </modules>
   
   <dependencies>
@@ -49,13 +51,14 @@
   -->
   <dependencyManagement>
       <dependencies>
-          <dependency>
-              <groupId>org.springframework.cloud</groupId>
-              <artifactId>spring-cloud-dependencies</artifactId>
-              <version>Dalston.SR1</version>
-              <type>pom</type>
-              <scope>import</scope>
-          </dependency>
+		<!-- 要注意Spring Cloud版本与Spring Boot版本之间匹配关系 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>Edgware.SR3</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
       </dependencies>
   </dependencyManagement>
   
