@@ -7,29 +7,28 @@
  *
 */
 
-package org.springcloud.turbine;
+package org.springcloud.turbine.amqp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
-import org.springframework.cloud.netflix.turbine.EnableTurbine;
+import org.springframework.cloud.netflix.turbine.stream.EnableTurbineStream;
 
 /**
- * ClassName:TurbineApplication <br/>
- * Function: Turbine 集群监控 - 构建监控聚合服务. <br/>
+ * ClassName:TurbineAMQPApplication <br/>
+ * Function: Turbine 集群监控 - 与消息代理结合. <br/>
  * Date:     2019年1月16日 下午5:20:10 <br/>
  * @author   kaiyun
  * @version  
  * @since    JDK 1.8
  * @see 	 
  */
-@EnableTurbine	// 开启 Turbine（集群监控）
-@EnableHystrixDashboard
+@EnableTurbineStream
+@EnableDiscoveryClient
 @SpringBootApplication
-public class TurbineApplication {
+public class TurbineAMQPApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(TurbineApplication.class, args);
+		SpringApplication.run(TurbineAMQPApplication.class, args);
 	}
 }
 
