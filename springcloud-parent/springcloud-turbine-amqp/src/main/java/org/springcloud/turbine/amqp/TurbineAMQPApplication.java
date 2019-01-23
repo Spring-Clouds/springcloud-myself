@@ -23,7 +23,7 @@ import org.springframework.cloud.netflix.turbine.stream.EnableTurbineStream;
  * @since    JDK 1.8
  * @see 	 
  */
-@EnableTurbineStream
+@EnableTurbineStream	// 启用 Turbine Stream 的配置
 @EnableDiscoveryClient
 @SpringBootApplication
 public class TurbineAMQPApplication {
