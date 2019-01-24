@@ -35,6 +35,7 @@
     <module>springcloud-turbine</module>
     <module>springcloud-turbine-amqp</module>
     <module>springcloud-feign-consumer</module>
+    <module>hello-service-api</module>
   </modules>
   
   <dependencies>
