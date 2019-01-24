@@ -7,10 +7,11 @@
  *
 */
 
-package org.springcloud.eureka.provider.dto;
+package org.springcloud.feign.consumer.service.dto;
 
 import java.io.Serializable;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -46,6 +47,6 @@ public class User implements Serializable {
 		this.userName = userName;
 		this.age = age;
 	}
-
+	
 }
 

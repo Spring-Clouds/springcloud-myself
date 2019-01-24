@@ -34,6 +34,7 @@
     <module>springcloud-hystrix-dashboard</module>
     <module>springcloud-turbine</module>
     <module>springcloud-turbine-amqp</module>
+    <module>springcloud-feign-consumer</module>
   </modules>
   
   <dependencies>
