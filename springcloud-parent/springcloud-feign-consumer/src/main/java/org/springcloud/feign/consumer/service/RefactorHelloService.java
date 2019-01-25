@@ -14,7 +14,7 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 
 /**
  * ClassName:RefactorHelloService <br/>
- * Function: TODO ADD FUNCTION. <br/>
+ * Function: 【服务消费者-service】声明式服务调用 Spring Cloud Feign：继承特性（依赖hello-service-api服务模块）. <br/>
  * Date:     2019年1月24日 下午6:13:37 <br/>
  * @author   kaiyun
  * @version  

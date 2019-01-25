@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * ClassName:HelloService <br/>
- * Function: 声明式服务调用 Spring Cloud Feign：继承特性. <br/>
+ * Function: 【hello-service-api】同时复用于服务端与客户端的接口. <br/>
  * Date:     2019年1月23日 下午4:03:45 <br/>
  * @author   kaiyun
  * @version  

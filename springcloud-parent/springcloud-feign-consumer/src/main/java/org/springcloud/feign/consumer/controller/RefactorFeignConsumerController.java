@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * ClassName:RefactorFeignConsumerController <br/>
- * Function: 实现对 Feign 客户端的调用. <br/>
+ * Function: 【服务消费者-controller】声明式服务调用 Spring Cloud Feign：继承特性（依赖hello-service-api服务模块）. <br/>
  * Date:     2019年1月23日 下午4:12:06 <br/>
  * @author   kaiyun
  * @version  
