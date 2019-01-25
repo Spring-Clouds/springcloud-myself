@@ -32,6 +32,7 @@
 	        <artifactId>spring-cloud-starter-feign</artifactId>
 	    </dependency>
 	    
+	    <!-- 依赖服务 -->
 	    <dependency>
 	    	<groupId>com.kaiyun.springcloud</groupId>
 	    	<artifactId>hello-service-api</artifactId>

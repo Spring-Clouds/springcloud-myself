@@ -22,7 +22,7 @@ import org.springframework.cloud.netflix.feign.FeignClient;
  * @see 	 
  */
 //通过 @FeignClient 注解指定服务名来绑定服务，然后再使用 Spring MVC 的注解来绑定具体该服务提供的 REST 接口，这里服务名不区分大小写
-@FeignClient("provider-service")
+@FeignClient("PROVIDER-SERVICE")
 public interface RefactorHelloService extends HelloService {
 	
 }
