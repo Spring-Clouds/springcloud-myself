@@ -3,17 +3,17 @@
   <modelVersion>4.0.0</modelVersion>
 
   <!-- 使用最新的spring-boot版本 -->
-  <!-- <parent>
+  <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.9.RELEASE</version>
-  </parent> -->
-  <parent>
+    <version>1.5.10.RELEASE</version>
+  </parent>
+  <!-- <parent>
   	<groupId>org.springframework.cloud</groupId>
   	<artifactId>spring-cloud-starter-parent</artifactId>
   	<version>Edgware.SR3</version>
   	<relativePath/>
-  </parent>
+  </parent> -->
   
   <groupId>com.kaiyun.springcloud</groupId>
   <artifactId>springcloud-parent</artifactId>

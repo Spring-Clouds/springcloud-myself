@@ -13,9 +13,9 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
  * @since JDK 1.8
  * @author kaiyun
  */
-@EnableFeignClients		// 开启 Spring Cloud Feign 的支持功能
-@EnableDiscoveryClient	// 让应用注册为 Eureka 客户端应用，以获得服务发现的能力。
 @SpringBootApplication
+@EnableDiscoveryClient	// 让应用注册为 Eureka 客户端应用，以获得服务发现的能力。
+@EnableFeignClients		// 开启 Spring Cloud Feign 的支持功能
 public class FeignConsumerApplication{
 	
     public static void main( String[] args )

@@ -24,7 +24,7 @@ import feign.Feign;
  * @since    JDK 1.8
  * @see 	 
  */
-@Configuration
+//@Configuration
 public class DisableHystrixConfiguration {
 	
 	/**

@@ -15,20 +15,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * ClassName:HelloServiceFallback <br/>
- * Function: TODO ADD FUNCTION. <br/>
+ * Function: 服务降级类. <br/>
  * Date:     2019年1月25日 下午1:56:47 <br/>
  * @author   kaiyun
  * @version  
  * @since    JDK 1.8
  * @see 	 
  */
-@Slf4j
 @Component
 public class HelloServiceFallback implements HelloService {
+	
 	@Override
 	public String hello() {
 		return "error";
