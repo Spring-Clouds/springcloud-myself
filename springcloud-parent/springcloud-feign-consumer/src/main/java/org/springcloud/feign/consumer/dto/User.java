@@ -7,7 +7,7 @@
  *
 */
 
-package org.springcloud.feign.consumer.service.dto;
+package org.springcloud.feign.consumer.dto;
 
 import java.io.Serializable;
 

@@ -7,9 +7,10 @@
  *
 */
 
-package org.springcloud.feign.consumer.service;
+package org.springcloud.feign.consumer.fallback;
 
-import org.springcloud.feign.consumer.service.dto.User;
+import org.springcloud.feign.consumer.dto.User;
+import org.springcloud.feign.consumer.service.HelloService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;

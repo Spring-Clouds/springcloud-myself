@@ -10,14 +10,13 @@
 package org.springcloud.feign.consumer.configbean;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 import feign.Feign;
 
 /**
  * ClassName:DisableHystrixConfiguration <br/>
- * Function: 关闭 Hystrix 的配置类. <br/>
+ * Function: 关闭 Hystrix 的配置类（不适用时请将该类上的注解全部去掉）. <br/>
  * Date:     2019年1月25日 下午1:37:15 <br/>
  * @author   kaiyun
  * @version  

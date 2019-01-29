@@ -9,8 +9,9 @@
 
 package org.springcloud.feign.consumer.service;
 
-import org.springcloud.feign.consumer.configbean.DisableHystrixConfiguration;
-import org.springcloud.feign.consumer.service.dto.User;
+import org.springcloud.feign.consumer.configbean.FullLogConfiguration;
+import org.springcloud.feign.consumer.dto.User;
+import org.springcloud.feign.consumer.fallback.HelloServiceFallback;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,21 +28,28 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since    JDK 1.8
  * @see 	 
  */
-/* 通过 @FeignClient 注解指定服务名来绑定服务，然后再使用 Spring MVC 的注解来绑定具体该服务提供的 REST 接口，这里服务名不区分大小写
+/* 
+ * 通过 @FeignClient 注解指定服务名来绑定服务，然后再使用 Spring MVC 的注解来绑定具体该服务提供的 REST 接口，这里服务名不区分大小写
  * 在初始化过程中，Spring Cloud Feign 会根据该注解的 name 属性或 value 属性指定的服务名，自动创建一个同名的 Ribbon 客户端。
  */
 //@FeignClient("PROVIDER-SERVICE")
-/* 针对某个服务客户端关闭 Hystrix 支持
+/* 
+ * 针对某个服务客户端关闭 Hystrix 支持
  */
 //@FeignClient(name="PROVIDER-SERVICE", configuration=DisableHystrixConfiguration.class)
-/*通过 @FeignClient 注解的 fallback 属性来指定对应的服务降级实现类（注意：
+/*
+ * 通过 @FeignClient 注解的 fallback 属性来指定对应的服务降级实现类（注意：
  * 若之前有利用DisableHystrixConfiguration.class类关闭Hystrix支持时，这里需要将该类上的所有注解都去掉，服务降级才能起作用，否则不起作用）
  * 参考网站：https://blog.csdn.net/wangyuxuan_java/article/details/80588165
  */
-@FeignClient(name="PROVIDER-SERVICE", fallback=HelloServiceFallback.class)
+//@FeignClient(name="PROVIDER-SERVICE", fallback=HelloServiceFallback.class)
+/*
+ * Feign 日志配置（通过实现配置类实现的）
+ */
+@FeignClient(value="PROVIDER-SERVICE", fallback=HelloServiceFallback.class, configuration=FullLogConfiguration.class)
 public interface HelloService {
 	
-	@RequestMapping("/hello")
+	@RequestMapping(value="/hello")
 	String hello();
 	
 //-----------------------------------------------------------------------------

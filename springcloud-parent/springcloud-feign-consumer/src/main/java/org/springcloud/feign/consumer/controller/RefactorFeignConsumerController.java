@@ -10,7 +10,7 @@
 package org.springcloud.feign.consumer.controller;
 
 import org.hello.service.api.dto.User;
-import org.springcloud.feign.consumer.service.RefactorHelloService;
+import org.springcloud.feign.consumer.service.refactor.RefactorHelloService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

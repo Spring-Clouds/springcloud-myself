@@ -7,7 +7,7 @@
  *
 */
 
-package org.springcloud.feign.consumer.service;
+package org.springcloud.feign.consumer.service.refactor;
 
 import org.hello.service.api.service.HelloService;
 import org.springframework.cloud.netflix.feign.FeignClient;

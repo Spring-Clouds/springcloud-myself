@@ -9,8 +9,8 @@
 
 package org.springcloud.feign.consumer.controller;
 
+import org.springcloud.feign.consumer.dto.User;
 import org.springcloud.feign.consumer.service.HelloService;
-import org.springcloud.feign.consumer.service.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
