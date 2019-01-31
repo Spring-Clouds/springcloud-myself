@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -41,7 +42,7 @@ public class HelloController {
 	@Autowired
 	private DiscoveryClient client;
 	
-	@RequestMapping(value="/hello", method=RequestMethod.GET)
+	@RequestMapping(value="/hello")
 	public String index() throws Exception {
 		ServiceInstance instance = client.getLocalServiceInstance();
 		

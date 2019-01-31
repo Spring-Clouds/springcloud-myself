@@ -15,6 +15,7 @@ import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.netflix.zuul.filters.discovery.PatternServiceRouteMapper;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 /**
  * ClassName:APIGatewayApplication <br/>
@@ -30,13 +31,13 @@ import org.springframework.context.annotation.Bean;
 public class APIGatewayApplication {
 	
 	/**
-	 * AccessFilter:Spring Cloud Zuul：API网关服务-Zuul过滤器. <br/>
+	 * AccessFilter:Spring Cloud Zuul：API网关服务-Zuul过滤器【或者在类AccessFilter上使用 @Component注解】. <br/>
 	 * 		在实现自定义过滤器之后，它并不会直接生效，还需要为其创建具体的 Bean 才能启动该过滤器. <br/>
 	 */
-	@Bean
-	public AccessFilter AccessFilter() {
-		return new AccessFilter();
-	}
+//	@Bean
+//	public AccessFilter AccessFilter() {
+//		return new AccessFilter();
+//	}
 	
 	/**
 	 * serviceRouteMapper:Spring Cloud Zuul：API网关服务-自定义路由映射规则. <br/>
