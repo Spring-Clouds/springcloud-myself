@@ -37,6 +37,9 @@
     <module>springcloud-feign-consumer</module>
     <module>hello-service-api</module>
     <module>springcloud-api-gateway</module>
+    <module>springcloud-api-gateway-dynamic-route</module>
+    <module>api-gateway-dynamic-filter</module>
+    <module>springcloud-config-server</module>
   </modules>
   
   <dependencies>
