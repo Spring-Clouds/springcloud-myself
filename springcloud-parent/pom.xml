@@ -41,6 +41,7 @@
     <module>api-gateway-dynamic-filter</module>
     <module>springcloud-config-server</module>
     <module>springcloud-config-client</module>
+    <module>springcloud-rabbitmq-hello</module>
   </modules>
   
   <dependencies>
