@@ -40,6 +40,7 @@
     <module>springcloud-api-gateway-dynamic-route</module>
     <module>api-gateway-dynamic-filter</module>
     <module>springcloud-config-server</module>
+    <module>springcloud-config-client</module>
   </modules>
   
   <dependencies>
