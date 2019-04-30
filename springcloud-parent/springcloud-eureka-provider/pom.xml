@@ -17,10 +17,12 @@
   </properties>
   
   <dependencies>
+  	<!-- 支持全栈式Web开发，包括Tomcat和spring-webmvc -->
   	<dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+    
     <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-eureka-server</artifactId>

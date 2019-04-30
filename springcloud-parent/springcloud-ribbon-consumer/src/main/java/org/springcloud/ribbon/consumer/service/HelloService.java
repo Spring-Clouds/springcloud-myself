@@ -41,7 +41,7 @@ public class HelloService {
 		long start = System.currentTimeMillis();
 		String result = restTemplate.getForEntity("http://PROVIDER-SERVICE/hello", String.class).getBody();
 		long end = System.currentTimeMillis();
-		log.info("Spend time:{}", (end-start));
+		log.info(">>>>>>>>>>>>Spend time:{}", (end-start));
 		
 		return result.toString(); 
 	}
@@ -54,7 +54,7 @@ public class HelloService {
 	 * @author kaiyun
 	 */
 	public String helloFallback() {
-		return "error";
+		return "error(由于Hystrix默认超时间是为1000毫秒，所以这里采用了0-3000的随机数以让处理过程有一定概率发生超时来触发断路器)";
 	}
 
 }

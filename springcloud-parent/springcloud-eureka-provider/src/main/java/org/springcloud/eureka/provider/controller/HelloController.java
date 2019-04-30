@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,9 +45,9 @@ public class HelloController {
 		ServiceInstance instance = client.getLocalServiceInstance();
 		
 		// 让处理线程等待几秒钟，模拟下服务阻塞
-		//（由于Hystrix默认超时间是为2000毫秒，所以这里采用了0-3000的随机数以让处理过程有一定概率发生超时来触发断路器）
+		//（由于Hystrix默认超时间是为1000毫秒，所以这里采用了0-3000的随机数以让处理过程有一定概率发生超时来触发断路器）
 		int sleepTime = new Random().nextInt(3000);
-		log.info("sleepTime:{}", sleepTime);
+		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>sleepTime:{}", sleepTime);
 		Thread.sleep(sleepTime);
 		
 		log.info(">>>>>>>>>>>>无 Request参数的请求：/hello, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());
