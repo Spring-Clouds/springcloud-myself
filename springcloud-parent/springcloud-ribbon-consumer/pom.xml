@@ -48,10 +48,10 @@
     </dependency>
     
     <!-- Turbine 集群监控：与消息代理结合（见5.6）【与springcloud-turbine-amqp模块相关】  -->
-    <dependency>
+    <!-- <dependency>
     	<groupId>org.springframework.cloud</groupId>
     	<artifactId>spring-cloud-netflix-hystrix-amqp</artifactId>
-    </dependency>
+    </dependency> -->
 
   </dependencies>
 </project>

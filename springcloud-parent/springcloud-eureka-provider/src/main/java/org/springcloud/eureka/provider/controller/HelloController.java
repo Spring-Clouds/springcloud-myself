@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,6 @@ public class HelloController {
 		int sleepTime = new Random().nextInt(3000);
 		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>sleepTime:{}", sleepTime);
 		Thread.sleep(sleepTime);
-		
 		log.info(">>>>>>>>>>>>无 Request参数的请求：/hello, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());
 		return "hello world";
 	}
@@ -76,6 +76,7 @@ public class HelloController {
 	}
 	
 	@RequestMapping(value="/hello3", method=RequestMethod.POST)
+	@ResponseBody
 	public String hello(@RequestBody User user) throws Exception {
 		ServiceInstance instance = client.getLocalServiceInstance();
 		log.info(">>>>>>>>>>>>带有RequestBody的请求：/hello3, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());

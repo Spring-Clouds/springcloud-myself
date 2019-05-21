@@ -12,9 +12,11 @@ package org.springcloud.ribbon.consumer.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
+import org.springcloud.ribbon.consumer.customhystrixcommand.UserObservableCommand;
 import org.springcloud.ribbon.consumer.customhystrixcommand.UserCommand;
 import org.springcloud.ribbon.consumer.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +34,12 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.netflix.hystrix.contrib.javanica.annotation.ObservableExecutionMode;
 import com.netflix.hystrix.contrib.javanica.command.AsyncResult;
 
 import lombok.extern.slf4j.Slf4j;
+import rx.Observable;
+import rx.Subscriber;
 
 /**
  * ClassName:UserService <br/>
@@ -63,13 +68,10 @@ public class UserService {
 	 */
 	public User getUserByIdSyncUnAnnotations(Long id) {
 		long start = System.currentTimeMillis();
-		
-		UserCommand userCommand = new UserCommand(restTemplate, 1L);
-		User user = userCommand.execute();
-		
+		UserCommand userCommand = new UserCommand(restTemplate, id);
+		User user = userCommand.execute();	// 同步执行命令
 		long end = System.currentTimeMillis();
-		log.info("Spend time:{}", (end-start));
-		
+		log.info("----------Spend time:{}", (end-start));
 		return user;
 	}
 	
@@ -80,17 +82,16 @@ public class UserService {
 	 * @return
 	 * @since JDK 1.8
 	 * @author kaiyun
+	 * @throws Exception 
 	 */
-	public Future<User> getUserByIdAsyncUnAnnotations(Long id) {
+	public User getUserByIdAsyncUnAnnotations(Long id) throws Exception {
 		long start = System.currentTimeMillis();
-		
 		UserCommand userCommand = new UserCommand(restTemplate, 1L);
-		Future<User> futrueUser = userCommand.queue();	// 异步
-		
+		Future<User> futrueUser = userCommand.queue();	// 异步执行命令
+		User user = futrueUser.get();
 		long end = System.currentTimeMillis();
-		log.info("Spend time:{}", (end-start));
-		
-		return futrueUser;
+		log.info("----------Spend time:{}", (end-start));
+		return user;
 	}
 	
 	// @HystrixComand 注解是Hystrix中的核心注解，通过它创建了 HystrixComand 的实现，同时利用 fallback 属性指定了服务降级的实现方法。
@@ -98,7 +99,7 @@ public class UserService {
 	// 通过继承的方式来实现，实现 HystrixCommand 类。即可实现请求的同步执行也可以实现异步执行。（详细见5.3.1）
 	
 	/**
-	 * syncAnnotationsGetUserById: 使用注解@HystrixComand，实现请求的同步执行. <br/>
+	 * syncAnnotationsGetUserById: 【传统方式】使用注解@HystrixComand，实现请求的“同步”执行. <br/>
 	 *
 	 * @param id
 	 * @return
@@ -108,17 +109,15 @@ public class UserService {
 	@HystrixCommand(fallbackMethod = "getUserByIdFallback")
 	public User getUserByIdSyncAnnotations(Long id) {
 		long start = System.currentTimeMillis();
-		
 		User user = restTemplate.getForObject("http://PROVIDER-SERVICE/users/findone/{1}", User.class, id);
-		
 		long end = System.currentTimeMillis();
-		log.info("Spend time:{}", (end-start));
+		log.info("----------Spend time:{}", (end-start));
 		
 		return user; 
 	}
 	
 	/**
-	 * asyncAnnotationsGetUserByIdAsync: 使用注解@HystrixComand，实现请求的异步处理. <br/>
+	 * asyncAnnotationsGetUserByIdAsync: 【传统方式】使用注解@HystrixComand，实现请求的“异步”处理. <br/>
 	 *
 	 * @param id
 	 * @return
@@ -126,20 +125,105 @@ public class UserService {
 	 * @author kaiyun
 	 */
 	@HystrixCommand(fallbackMethod = "getUserByIdFallback")
-	public Future<User> getUserByIdAsyncAnnotations(final Long id) {
+	public User getUserByIdAsyncAnnotations(final Long id) throws Exception {
 		long start = System.currentTimeMillis();
-		
 		Future<User> futrueUser = new AsyncResult<User>() {
 			@Override
 			public User invoke() {
 				return restTemplate.getForObject("http://PROVIDER-SERVICE/users/findone/{1}", User.class, id);
 			}
 		};
-		
 		long end = System.currentTimeMillis();
-		log.info("Spend time:{}", (end-start));
+		log.info("----------Spend time:{}", (end-start));
+		return futrueUser.get();
+	}
+	
+	// 除了传统的同步执行与异步执行之外，还可以将 HystrixCommand 通过 Observable 来实现响应式执行方式。
+	// 通过调用 observe() 和 toObservable() 方法可以返回 Observable 对象
+	
+	/**
+	 * getUserByIdForObserve:【响应式执行方式】通过注解@HystrixCommand，获取能发射一次的Obserable对象. <br/>
+	 * &nbsp;observe() 和 toObservable()虽然都返回了 Observable，但是他们略有不同：.<br/>
+	 * &nbsp;前者返回的是一个 Hot Observable，该命令会在 observe() 调用的时候立即执行,当Observable每次被订阅时会重访它的行为. <br/>
+	 * &nbsp;后者返回的是一个 Cold Observable，toObservable()执行之后，命令不会被立即执行，只有当所有订阅者都订阅它之后才会执行. <br/>
+	 *
+	 * 局限性：
+	 * 返回的 Observable 只能发射一次数据
+	 * @param id
+	 * @return
+	 * @since JDK 1.8
+	 * @author kaiyun
+	 */
+	@HystrixCommand(fallbackMethod = "getUserByIdFallback")
+	public User getUserByIdForObservableAnnotationsOne(final Long id) throws Exception {
+		long start = System.currentTimeMillis();
+		UserCommand userCommand = new UserCommand(restTemplate, id);
+		Observable<User> observe = null;
+		if (id>1L) {
+			observe = userCommand.toObservable();
+		} else {
+			observe = userCommand.observe();
+		}
+		long end = System.currentTimeMillis();
+		log.info("----------Spend time:{}", (end-start));
+		return observe.toBlocking().toFuture().get();
+	}
+	
+	//虽然 HystrixCommand 具备了 Observe() 和 toObservable() 的功能，但是它的实现有一定的局限性，它返回的 Observable 只能发射一次数据。
+	//所以Hystrix还提供了另外一个特殊命令封装 HystrixObservableCommand，通过它实现的命令可以获取能发射多次的 Observable。
+	
+	/**
+	 * getUserByIdForObservableUnAnnotations:【响应式执行方式】通过命令封装 HystrixObservableCommand对象，获取能发射多次的Obserable对象. <br/>
+	 *
+	 * @param id
+	 * @return
+	 * @since JDK 1.8
+	 * @author kaiyun
+	 */
+	public User getUserByIdForObservableUnAnnotationsMany(final Long id) throws Exception {
+		long start = System.currentTimeMillis();
+		Observable<User> observe = null;
+		UserObservableCommand hystrixObservableCommand = new UserObservableCommand(restTemplate, 1L);
+		if (id>1L) {
+			observe = hystrixObservableCommand.toObservable();
+		} else {
+			observe = hystrixObservableCommand.observe();
+		}
+		long end = System.currentTimeMillis();
+		log.info("----------Spend time:{}", (end-start));
 		
-		return futrueUser;
+		return observe.toBlocking().toFuture().get();
+	}
+	
+	/**
+	 * getUserByIdForObservableAnnotations:【响应式执行方式】通过注解@HystrixCommand，获取能发射多次的Obserable对象. <br/>
+	 *
+	 * @param id
+	 * @return
+	 * @since JDK 1.8
+	 * @author kaiyun
+	 */
+	@HystrixCommand(observableExecutionMode=ObservableExecutionMode.EAGER)//EAGER表示使用observe()执行方式，LAZY表示使用toObservable()执行方式
+	public User getUserByIdForObservableAnnotationsMany(final Long id) throws Exception {
+		long start = System.currentTimeMillis();
+		Observable<User> observe = Observable.create(new Observable.OnSubscribe<User>() {
+			@Override
+			public void call(Subscriber<? super User> observer) {
+				try {
+					if (!observer.isUnsubscribed() ) {
+						User user = restTemplate.getForObject("http://PROVIDER-SERVICE/users/findone/{1}", User.class, id);
+						observer.onNext(user);
+						observer.onCompleted();
+					}
+				} catch (Exception e) {
+					observer.onError(e);
+				}
+			}
+		});
+		long end = System.currentTimeMillis();
+		log.info("----------Spend time:{}", (end-start));
+		
+		return observe.toBlocking().toFuture().get();
 	}
 	
 	/**
@@ -151,7 +235,7 @@ public class UserService {
 	 * @since JDK 1.8
 	 * @author kaiyun
 	 */
-	public User getUserByIdFallback(Long id, Throwable e) {
+	private User getUserByIdFallback(Long id, Throwable e) {
 		User user = new User();
 		user.setId(id);
 		user.setUserName("【findone】调用出异常啦，启用熔断器");
@@ -200,7 +284,7 @@ public class UserService {
 		}
 		
 		long end = System.currentTimeMillis();
-		log.info("Spend time:{}", (end-start));
+		log.info("----------Spend time:{}", (end-start));
 		
 		return userList; 
 	}

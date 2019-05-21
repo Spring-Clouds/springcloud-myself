@@ -45,7 +45,7 @@ public class FeignConsumerController {
 		StringBuilder sb = new StringBuilder();
 		sb.append(helloService.hello()).append("\n");
 		sb.append(helloService.hello("kaiyun")).append("\n");
-		sb.append(helloService.hello("kaiyun", 29)).append("\n");
+		sb.append(helloService.hello("kaiyun", 29).toString()).append("\n");
 		sb.append(helloService.hello(new User("kaiyun", 29))).append("\n");
 		
 		return sb.toString();

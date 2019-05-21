@@ -46,9 +46,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 /*
  * Feign 日志配置（通过实现配置类实现的）
  */
+
+// 步骤一：通过 @FeignClient 注解指定服务名来绑定服务（服务名不区分小写）
 @FeignClient(value="PROVIDER-SERVICE", fallback=HelloServiceFallback.class, configuration=FullLogConfiguration.class)
 public interface HelloService {
 	
+	// 步骤二：使用 Spring MVC 的注解来绑定具体该服务提供的 REST 接口
 	@RequestMapping(value="/hello")
 	String hello();
 	

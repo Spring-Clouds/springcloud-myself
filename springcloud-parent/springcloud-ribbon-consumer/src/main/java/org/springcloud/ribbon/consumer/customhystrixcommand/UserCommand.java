@@ -17,7 +17,6 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixRequestCache;
 import com.netflix.hystrix.HystrixThreadPoolKey;
-import com.netflix.hystrix.HystrixCommand.Setter;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategyDefault;
 
 /**
@@ -74,8 +73,8 @@ public class UserCommand extends HystrixCommand<User> {
 	protected User run() throws Exception {
 		User user = restTemplate.getForObject("http://PROVIDER-SERVICE/users/findone/{1}", User.class, id);
 		
-		// 若上面有写的操作，则需要刷新缓存，清理缓存中失效的User
-		this.flushCache(id);
+//		// 若上面有写的操作，则需要刷新缓存，清理缓存中失效的User
+//		this.flushCache(id);
 		
 		return user;
 	}
@@ -89,10 +88,10 @@ public class UserCommand extends HystrixCommand<User> {
 	 *	3、若只是读操作，则不需要考虑缓存内容是否正确的问题。若有更新数据的写操作，则在进行写操作时进行及时处理，以防止读操作的请求命令获取到了失效的数据（见如下flushCache方法）。<br/>
 	 * @see com.netflix.hystrix.AbstractCommand#getCacheKey()
 	 */
-	@Override
-	protected String getCacheKey() {
-		return String.valueOf(id);
-	}
+//	@Override
+//	protected String getCacheKey() {
+//		return String.valueOf(id);
+//	}
 	
 	/**
 	 * flushCache: 【Hystrix - 清理失效缓存功能】. <br/>

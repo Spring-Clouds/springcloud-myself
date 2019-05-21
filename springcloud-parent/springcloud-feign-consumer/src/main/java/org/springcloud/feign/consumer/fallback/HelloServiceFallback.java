@@ -30,12 +30,12 @@ public class HelloServiceFallback implements HelloService {
 	
 	@Override
 	public String hello() {
-		return "error";
+		return "进入熔断服务..无参!";
 	}
 
 	@Override
 	public String hello(@RequestParam("userName") String userName) {
-		return "error";
+		return "进入熔断服务..@RequestParam!";
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class HelloServiceFallback implements HelloService {
 
 	@Override
 	public String hello(@RequestBody User user) {
-		return "error";
+		return "进入熔断服务..@RequestHeader!";
 	}
 
 

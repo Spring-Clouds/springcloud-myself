@@ -11,7 +11,6 @@ package org.springcloud.feign.consumer.dto;
 
 import java.io.Serializable;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -25,7 +24,7 @@ import lombok.ToString;
  * @since    JDK 1.8
  * @see 	 
  */
-@ToString(callSuper=true, includeFieldNames=true)
+@ToString(exclude="id")
 @NoArgsConstructor
 @Data
 public class User implements Serializable {
@@ -47,6 +46,14 @@ public class User implements Serializable {
 		this.userName = userName;
 		this.age = age;
 	}
+
+	public User(Long id, String userName, int age) {
+		super();
+		this.id = id;
+		this.userName = userName;
+		this.age = age;
+	}
+	
 	
 }
 

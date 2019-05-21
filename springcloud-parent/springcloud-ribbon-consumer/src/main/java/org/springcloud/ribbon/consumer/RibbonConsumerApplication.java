@@ -26,8 +26,12 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class RibbonConsumerApplication{
 	
+	/**
+	 * 开启客户端负载均衡. <br/>
+	 * 通过@LoadBalanced注解来标记RestTemplate，创建拦截器拦截请求，并根据服务名通过负载均衡策略来选择一个实例
+	 */
 	@Bean
-	@LoadBalanced	// 开启客户端负载均衡
+	@LoadBalanced
 	RestTemplate restTemplate() {
 		return new RestTemplate();
 	}

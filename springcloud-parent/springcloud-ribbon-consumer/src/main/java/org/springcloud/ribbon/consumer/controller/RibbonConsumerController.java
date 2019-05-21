@@ -9,13 +9,10 @@
 
 package org.springcloud.ribbon.consumer.controller;
 
-import java.util.List;
 import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.springcloud.ribbon.consumer.customhystrixcommand.UserBatchCommand;
 import org.springcloud.ribbon.consumer.dto.User;
 import org.springcloud.ribbon.consumer.hystrixcllapser.UserCollapseCommand;
 import org.springcloud.ribbon.consumer.service.HelloService;
@@ -27,9 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,9 +45,6 @@ public class RibbonConsumerController {
 	@Autowired
 	private DiscoveryClient client;
 	
-//	@Autowired
-//	private RestTemplate restTemplate;
-	
 	@Autowired
 	private HelloService helloService;
 	
@@ -60,49 +52,65 @@ public class RibbonConsumerController {
 	private UserService userService;
 	
 	
-	@RequestMapping(value="/ribbon-consumer", method=RequestMethod.GET)
+	@RequestMapping(value="/ribbon-consumer/hello", method=RequestMethod.GET)
 	public String helloConsumer() {
-//		return restTemplate.getForEntity("http://HELLO-SERVICE/hello", String.class).getBody();
 		return helloService.hello();
 	}
 	
 	@RequestMapping(value="/ribbon-consumer/users/sync/{id}", method=RequestMethod.GET)
 	public String getUserByIdSyncUnAnnotations(@PathVariable("id") Long id) throws Exception {
 		User user = userService.getUserByIdSyncUnAnnotations(id);
-		
 		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("/ribbon-consumer/users/sync/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
-		
+		log.info("----------/ribbon-consumer/users/sync/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
 		return user.toString();
 	}
 	
 	@RequestMapping(value="/ribbon-consumer/users/async/{id}", method=RequestMethod.GET)
 	public String getUserByIdAsyncUnAnnotations(@PathVariable("id") Long id) throws Exception {
-		User user = userService.getUserByIdAsyncUnAnnotations(id).get();
-		
+		User user = userService.getUserByIdAsyncUnAnnotations(id);
 		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("/ribbon-consumer/users/async/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
-		
+		log.info("----------/ribbon-consumer/users/async/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
 		return user.toString();
 	}
+	
 	
 	@RequestMapping(value="/ribbon-consumer/users/sync/anno/{id}", method=RequestMethod.GET)
 	public String getUserByIdSyncAnnotations(@PathVariable("id") Long id) throws Exception {
 		User user = userService.getUserByIdSyncAnnotations(id);
-		
 		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("/ribbon-consumer/users/sync/anno/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
-		
+		log.info("----------/ribbon-consumer/users/sync/anno/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
 		return user.toString();
 	}
 	
 	@RequestMapping(value="/ribbon-consumer/users/async/anno/{id}", method=RequestMethod.GET)
 	public String getUserByIdAsyncAnnotations(@PathVariable("id") Long id) throws Exception {
-		User user = userService.getUserByIdAsyncAnnotations(id).get();
-		
+		User user = userService.getUserByIdAsyncAnnotations(id);
 		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("/ribbon-consumer/users/async/anno/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
-		
+		log.info("----------/ribbon-consumer/users/async/anno/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		return user.toString();
+	}
+	
+	@RequestMapping(value="/ribbon-consumer/users/observable/one/{id}", method=RequestMethod.GET)
+	public String getUserByIdForObservable(@PathVariable("id") Long id) throws Exception {
+		User user = userService.getUserByIdForObservableAnnotationsOne(id);
+		ServiceInstance instance = client.getLocalServiceInstance();
+		log.info("----------/ribbon-consumer/users/observable/one/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		return user.toString();
+	}
+	
+	@RequestMapping(value="/ribbon-consumer/users/observable/unanno/many/{id}", method=RequestMethod.GET)
+	public String getUserByIdForObservableUnAnnotations(@PathVariable("id") Long id) throws Exception {
+		User user = userService.getUserByIdForObservableUnAnnotationsMany(id);
+		ServiceInstance instance = client.getLocalServiceInstance();
+		log.info("----------/ribbon-consumer/users/observable/unanno/many/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		return user.toString();
+	}
+	
+	@RequestMapping(value="/ribbon-consumer/users/observable/anno/many/{id}", method=RequestMethod.GET)
+	public String getUserByIdObservableMany(@PathVariable("id") Long id) throws Exception {
+		User user = userService.getUserByIdForObservableAnnotationsMany(id);
+		ServiceInstance instance = client.getLocalServiceInstance();
+		log.info("----------/ribbon-consumer/users/observable/anno/many/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
 		return user.toString();
 	}
 	
@@ -142,7 +150,7 @@ public class RibbonConsumerController {
         context.close();
         
         ServiceInstance instance = client.getLocalServiceInstance();
-        log.info("/ribbon-consumer/users/find, host:{}, service_id:{}", instance.getHost(), instance.getServiceId());
+        log.info("----------/ribbon-consumer/users/find, host:{}, service_id:{}", instance.getHost(), instance.getServiceId());
 	}
 	
 	/**
@@ -174,7 +182,7 @@ public class RibbonConsumerController {
 	    context.close();
 	    
 	    ServiceInstance instance = client.getLocalServiceInstance();
-	    log.info("/ribbon-consumer/users/find, host:{}, service_id:{}", instance.getHost(), instance.getServiceId());
+	    log.info("----------/ribbon-consumer/users/find, host:{}, service_id:{}", instance.getHost(), instance.getServiceId());
 	}
 	
 }
