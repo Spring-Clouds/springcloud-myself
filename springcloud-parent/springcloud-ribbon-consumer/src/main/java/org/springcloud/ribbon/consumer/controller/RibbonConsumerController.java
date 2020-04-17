@@ -18,7 +18,6 @@ import org.springcloud.ribbon.consumer.hystrixcllapser.UserCollapseCommand;
 import org.springcloud.ribbon.consumer.service.HelloService;
 import org.springcloud.ribbon.consumer.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RibbonConsumerController {
 	
 	@Autowired
-	private DiscoveryClient client;
+	private DiscoveryClient discoveryClient;
 	
 	@Autowired
 	private HelloService helloService;
@@ -60,16 +59,14 @@ public class RibbonConsumerController {
 	@RequestMapping(value="/ribbon-consumer/users/sync/{id}", method=RequestMethod.GET)
 	public String getUserByIdSyncUnAnnotations(@PathVariable("id") Long id) throws Exception {
 		User user = userService.getUserByIdSyncUnAnnotations(id);
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("----------/ribbon-consumer/users/sync/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		log.info("----------/ribbon-consumer/users/sync/{}", id);
 		return user.toString();
 	}
 	
 	@RequestMapping(value="/ribbon-consumer/users/async/{id}", method=RequestMethod.GET)
 	public String getUserByIdAsyncUnAnnotations(@PathVariable("id") Long id) throws Exception {
 		User user = userService.getUserByIdAsyncUnAnnotations(id);
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("----------/ribbon-consumer/users/async/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		log.info("----------/ribbon-consumer/users/async/{}", id);
 		return user.toString();
 	}
 	
@@ -77,40 +74,35 @@ public class RibbonConsumerController {
 	@RequestMapping(value="/ribbon-consumer/users/sync/anno/{id}", method=RequestMethod.GET)
 	public String getUserByIdSyncAnnotations(@PathVariable("id") Long id) throws Exception {
 		User user = userService.getUserByIdSyncAnnotations(id);
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("----------/ribbon-consumer/users/sync/anno/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		log.info("----------/ribbon-consumer/users/sync/anno/{}", id);
 		return user.toString();
 	}
 	
 	@RequestMapping(value="/ribbon-consumer/users/async/anno/{id}", method=RequestMethod.GET)
 	public String getUserByIdAsyncAnnotations(@PathVariable("id") Long id) throws Exception {
 		User user = userService.getUserByIdAsyncAnnotations(id);
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("----------/ribbon-consumer/users/async/anno/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		log.info("----------/ribbon-consumer/users/async/anno/{}", id);
 		return user.toString();
 	}
 	
 	@RequestMapping(value="/ribbon-consumer/users/observable/one/{id}", method=RequestMethod.GET)
 	public String getUserByIdForObservable(@PathVariable("id") Long id) throws Exception {
 		User user = userService.getUserByIdForObservableAnnotationsOne(id);
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("----------/ribbon-consumer/users/observable/one/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		log.info("----------/ribbon-consumer/users/observable/one/{}", id);
 		return user.toString();
 	}
 	
 	@RequestMapping(value="/ribbon-consumer/users/observable/unanno/many/{id}", method=RequestMethod.GET)
 	public String getUserByIdForObservableUnAnnotations(@PathVariable("id") Long id) throws Exception {
 		User user = userService.getUserByIdForObservableUnAnnotationsMany(id);
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("----------/ribbon-consumer/users/observable/unanno/many/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		log.info("----------/ribbon-consumer/users/observable/unanno/many/{}", id);
 		return user.toString();
 	}
 	
 	@RequestMapping(value="/ribbon-consumer/users/observable/anno/many/{id}", method=RequestMethod.GET)
 	public String getUserByIdObservableMany(@PathVariable("id") Long id) throws Exception {
 		User user = userService.getUserByIdForObservableAnnotationsMany(id);
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info("----------/ribbon-consumer/users/observable/anno/many/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		log.info("----------/ribbon-consumer/users/observable/anno/many/{}", id);
 		return user.toString();
 	}
 	
@@ -149,8 +141,7 @@ public class RibbonConsumerController {
 
         context.close();
         
-        ServiceInstance instance = client.getLocalServiceInstance();
-        log.info("----------/ribbon-consumer/users/find, host:{}, service_id:{}", instance.getHost(), instance.getServiceId());
+        log.info("----------/ribbon-consumer/users/find");
 	}
 	
 	/**
@@ -181,8 +172,7 @@ public class RibbonConsumerController {
 	    
 	    context.close();
 	    
-	    ServiceInstance instance = client.getLocalServiceInstance();
-	    log.info("----------/ribbon-consumer/users/find, host:{}, service_id:{}", instance.getHost(), instance.getServiceId());
+	    log.info("----------/ribbon-consumer/users/find");
 	}
 	
 }

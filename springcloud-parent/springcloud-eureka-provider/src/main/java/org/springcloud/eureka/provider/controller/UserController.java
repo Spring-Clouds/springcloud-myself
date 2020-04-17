@@ -11,21 +11,17 @@ package org.springcloud.eureka.provider.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.springcloud.eureka.provider.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,17 +39,16 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 	
 	@Autowired
-	private DiscoveryClient client;
+	private DiscoveryClient discoveryClient;
 	
 	@RequestMapping(value="/users/findone/{id}", method=RequestMethod.GET)
 	public User getUserById(@PathVariable("id") Long id, HttpServletResponse response) throws Exception {
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		
-		ServiceInstance instance = client.getLocalServiceInstance();
 		User user = new User();
 		user.setId(id);
 		user.setUserName("kaiyun");
-		log.info("/users/findone/{}, host:{}, service_id:{}", id, instance.getHost(), instance.getServiceId());
+		log.info("/users/findone/{}", id);
 		log.info("----------服务提供方 - getUserById 方法响应：{}", user.toString());
 		return user;
 	}
@@ -71,7 +66,6 @@ public class UserController {
 	public List<User> getAllUser(@RequestHeader(value="userIds") String userIds, HttpServletResponse response) throws Exception {
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		
-		ServiceInstance instance = client.getLocalServiceInstance();
 		List<User> userList = new ArrayList<>();
 		String[] userIdArray = userIds.split(",");
 		for(String str : userIdArray) {
@@ -80,7 +74,7 @@ public class UserController {
 			user.setUserName("kaiyun");
 			userList.add(user);
 		}
-		log.info("/users/findall/{}, host:{}, service_id:{}", userIds, instance.getHost(), instance.getServiceId());
+		log.info("/users/findall/{}", userIds);
 		log.info("----------服务提供方 - getAllUser 方法响应：{}", userList.toString());
 		return userList;
 	}

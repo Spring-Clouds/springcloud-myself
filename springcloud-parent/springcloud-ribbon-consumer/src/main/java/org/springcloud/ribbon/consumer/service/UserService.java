@@ -12,12 +12,11 @@ package org.springcloud.ribbon.consumer.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
-import org.springcloud.ribbon.consumer.customhystrixcommand.UserObservableCommand;
 import org.springcloud.ribbon.consumer.customhystrixcommand.UserCommand;
+import org.springcloud.ribbon.consumer.customhystrixcommand.UserObservableCommand;
 import org.springcloud.ribbon.consumer.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -29,8 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.netflix.hystrix.HystrixCommand.Setter;
-import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;

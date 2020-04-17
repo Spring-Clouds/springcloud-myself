@@ -17,16 +17,16 @@
 	</properties>
 	
 	<dependencies>
+		<!-- 面向服务路由时必须添加，传统路由方式不需要添加 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+		
 		<!-- Spring Cloud Zuul：API网关服务 -->
 		<dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-zuul</artifactId>
-        </dependency>
-        
-        <!-- 面向服务路由时必须添加，传统路由方式不需要添加 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-eureka</artifactId>
+            <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
         </dependency>
 	</dependencies>
 </project>

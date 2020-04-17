@@ -10,7 +10,7 @@
 package org.api.gateway.dynamic.filter;
 
 import org.api.gateway.dynamic.filter.config.FilterConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
@@ -36,7 +36,7 @@ import com.netflix.zuul.groovy.GroovyFileFilter;
 public class APIGatewayDynamicFilterApplication {
 	
 	public static void main(String[] args) {
-		new SpringApplicationBuilder(APIGatewayDynamicFilterApplication.class).web(true).run(args);
+		SpringApplication.run(APIGatewayDynamicFilterApplication.class, args);
 	}
 	
 	/**

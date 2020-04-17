@@ -9,9 +9,12 @@
 
 package org.springcloud.api.gateway;
 
+import org.springcloud.api.gateway.filter.AccessFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.cloud.netflix.zuul.filters.discovery.PatternServiceRouteMapper;
+import org.springframework.context.annotation.Bean;
 
 /**
  * ClassName:APIGatewayApplication <br/>
@@ -30,10 +33,10 @@ public class APIGatewayApplication {
 	 * AccessFilter:Spring Cloud Zuul：API网关服务-Zuul过滤器【或者在类AccessFilter上使用 @Component注解】. <br/>
 	 * 		在实现自定义过滤器之后，它并不会直接生效，还需要为其创建具体的 Bean 才能启动该过滤器. <br/>
 	 */
-//	@Bean
-//	public AccessFilter AccessFilter() {
-//		return new AccessFilter();
-//	}
+	@Bean
+	public AccessFilter AccessFilter() {
+		return new AccessFilter();
+	}
 	
 	/**
 	 * serviceRouteMapper:Spring Cloud Zuul：API网关服务-自定义路由映射规则. <br/>
@@ -43,16 +46,15 @@ public class APIGatewayApplication {
 	 * 	（4）这样生成的表达式规则较为单一，不利于通过路径规则来进行管理。通常做法是为这些不同版本的微服务应用生成以版本代号作为路由前缀定义的路由规则。比如：/v1/userService/ <br/>
 	 *	（5）自定义实现为上述规则的微服务自动化地创建类似 /v1/userService/**的路由匹配规则。<br/>
 	 */
-//	@Bean
-//	public PatternServiceRouteMapper serviceRouteMapper() {
-//		// 第一个参数是：用来匹配服务名称是否符合该自定义规则的正则表达式
-//		// 第二个参数是：定义根据服务名中定义的内容转换出的路径表达式规则。
-//		// 只要符合第一个参数定义规则的服务名，都会优先使用该实现构建出的路径表达式，如果没有匹配的服务则还是会使用默认的路由映射规则。
-//		return new PatternServiceRouteMapper("(?<name>^.+)-(?<version>v.+$)", "${version}/${name}");
-//	}
+	@Bean
+	public PatternServiceRouteMapper serviceRouteMapper() {
+		// 第一个参数是：用来匹配服务名称是否符合该自定义规则的正则表达式
+		// 第二个参数是：定义根据服务名中定义的内容转换出的路径表达式规则。
+		// 只要符合第一个参数定义规则的服务名，都会优先使用该实现构建出的路径表达式，如果没有匹配的服务则还是会使用默认的路由映射规则。
+		return new PatternServiceRouteMapper("(?<name>^.+)-(?<version>v.+$)", "${version}/${name}");
+	}
 	
 	public static void main(String[] args) {
-//		new SpringApplicationBuilder(APIGatewayApplication.class).web(true).run(args);
 		SpringApplication.run(APIGatewayApplication.class, args);
 	}
 

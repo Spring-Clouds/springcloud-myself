@@ -11,8 +11,8 @@ package org.springcloud.turbine.amqp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.turbine.stream.EnableTurbineStream;
+//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+//import org.springframework.cloud.netflix.turbine.stream.EnableTurbineStream;
 
 /**
  * ClassName:TurbineAMQPApplication <br/>
@@ -23,8 +23,8 @@ import org.springframework.cloud.netflix.turbine.stream.EnableTurbineStream;
  * @since    JDK 1.8
  * @see 	 
  */
-@EnableTurbineStream	// 启用 Turbine Stream 的配置
-@EnableDiscoveryClient
+//@EnableTurbineStream	// 启用 Turbine Stream 的配置
+//@EnableDiscoveryClient
 @SpringBootApplication
 public class TurbineAMQPApplication {
 	public static void main(String[] args) {

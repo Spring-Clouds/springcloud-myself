@@ -10,7 +10,6 @@
 package org.springcloud.api.gateway.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,8 +38,7 @@ public class HelloController {
 	 */
 	@RequestMapping(value="/local/hello")
 	public String localHello() throws Exception {
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info(">>>>>>>>>>>>无 Request参数的请求：/local/hello, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());
+		log.info(">>>>>>>>>>>>无 Request参数的请求：/local/hello");
 		return "local hello world";
 	}
 

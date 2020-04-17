@@ -22,24 +22,28 @@
         <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     
-  	<dependency>
+    <!-- eureka-client 服务注册与发现 -->
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+	</dependency>
+	
+	<!-- ribbon 负载均衡 -->
+    <!-- <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-eureka-server</artifactId>
-    </dependency>
+        <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+    </dependency> -->
     
-    <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-ribbon</artifactId>
-    </dependency>
-    
+    <!-- 重试机制 -->
     <dependency>
 		<groupId>org.springframework.retry</groupId>
 		<artifactId>spring-retry</artifactId>
 	</dependency>
 	
+	<!-- hystrix内内嵌了ribbon 负载均衡 -->
 	<dependency>
 	  <groupId>org.springframework.cloud</groupId>
-	  <artifactId>spring-cloud-starter-hystrix</artifactId>
+	  <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
 	</dependency>
 	
 	<dependency>

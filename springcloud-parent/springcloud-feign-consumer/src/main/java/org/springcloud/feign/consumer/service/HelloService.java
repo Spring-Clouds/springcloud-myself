@@ -12,7 +12,7 @@ package org.springcloud.feign.consumer.service;
 import org.springcloud.feign.consumer.configbean.FullLogConfiguration;
 import org.springcloud.feign.consumer.dto.User;
 import org.springcloud.feign.consumer.fallback.HelloServiceFallback;
-import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;

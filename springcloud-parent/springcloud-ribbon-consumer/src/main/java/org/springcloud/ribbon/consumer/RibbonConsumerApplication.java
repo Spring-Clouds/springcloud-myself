@@ -1,10 +1,14 @@
 package org.springcloud.ribbon.consumer;
 
+import org.springcloud.ribbon.consumer.config.ProvideRuleConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.netflix.hystrix.EnableHystrix;
+import org.springframework.cloud.netflix.ribbon.RibbonClient;
+import org.springframework.cloud.netflix.ribbon.RibbonClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,9 +25,14 @@ import org.springframework.web.client.RestTemplate;
  * @since JDK 1.8
  * @author kaiyun
  */
-@EnableCircuitBreaker	// 开启断路器功能（也可使用 Spring Cloud应用中的 @SpringCloudApplication 注解来修饰应用主类）
+//@EnableCircuitBreaker	// 【老版本】开启断路器功能（也可使用 Spring Cloud应用中的 @SpringCloudApplication 注解来修饰应用主类）
+@EnableHystrix // 【新版本】开启断路器功能 @EnableHystrix 继承@EnableCircuitBreaker,估计是因为符合命名规范
 @EnableDiscoveryClient	// 让应用注册为 Eureka 客户端应用，以获得服务发现的能力。
+@RibbonClients({ //为指定的服务指定相关配置
+	@RibbonClient(name="provider-service", configuration=ProvideRuleConfig.class)
+})
 @SpringBootApplication
+//@SpringCloudApplication
 public class RibbonConsumerApplication{
 	
 	/**

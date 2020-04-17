@@ -2,12 +2,10 @@ package org.springcloud.feign.consumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+//import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.context.annotation.Bean;
-
-import feign.Logger;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * ClassName: FeignConsumerApplication <br/>
@@ -17,9 +15,9 @@ import feign.Logger;
  * @since JDK 1.8
  * @author kaiyun
  */
-@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableDiscoveryClient	// 让应用注册为 Eureka 客户端应用，以获得服务发现的能力。
 @EnableFeignClients		// 开启 Spring Cloud Feign 的支持功能，扫描声明它们是feign客户端的接口(通过@FeignClient)
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class FeignConsumerApplication{
 	
 	/**

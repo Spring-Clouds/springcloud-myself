@@ -35,6 +35,10 @@ public class AccessFilter extends ZuulFilter {
 
 	/**
 	 * 过滤器的类型，他决定过滤器在请求的哪个生命周期中执行。这里定义为 pre，代表会在请求被路由之前执行.
+	 * PRE：这种过滤器在请求被路由之前调用
+	 * ROUTING：这种过滤器将请求路由到微服务
+	 * POST:这种过滤器在路由到微服务以后执行
+	 * POST:这种过滤器在路由到微服务以后执行
 	 * @see com.netflix.zuul.ZuulFilter#filterType()
 	 */
 	@Override

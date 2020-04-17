@@ -12,7 +12,6 @@ package org.springcloud.eureka.provider.controller;
 import org.hello.service.api.dto.User;
 import org.hello.service.api.service.HelloService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -37,26 +36,23 @@ import lombok.extern.slf4j.Slf4j;
 public class RefactorHelloController implements HelloService {
 	
 	@Autowired
-	private DiscoveryClient client;
+	private DiscoveryClient discoveryClient;
 	
 	@Override
 	public String hello(@RequestParam("userName") String userName) {
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info(">>>>>>>>>>>>带有 Request参数的请求：/hello4, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());
+		log.info(">>>>>>>>>>>>带有 Request参数的请求：/hello4");
 		return "hello " + userName;
 	}
 
 	@Override
 	public User hello(@RequestHeader("userName") String userName, @RequestHeader("age") Integer age) {
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info(">>>>>>>>>>>>带有Header信息的请求：/hello5, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());
+		log.info(">>>>>>>>>>>>带有Header信息的请求：/hello5");
 		return new User(userName,age);
 	}
 
 	@Override
 	public String hello(@RequestBody User user) {
-		ServiceInstance instance = client.getLocalServiceInstance();
-		log.info(">>>>>>>>>>>>带有RequestBody的请求：/hello6, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());
+		log.info(">>>>>>>>>>>>带有RequestBody的请求：/hello6");
 		return "hello " + user.getUserName() + ", " + user.getAge();
 	}
 	
